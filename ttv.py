@@ -92,7 +92,7 @@ def make_ttv(dataset, ttv_ratio=DEFAULT_TTV_RATIO, deterministic=False):
         random.shuffle(sizes_and_ids)
 
     # normalise ttv_ratio
-    ttv_ratio = [x / sum(ttv_ratio) for x in ttv_ratio]
+    ttv_ratio = [float(x) / sum(ttv_ratio) for x in ttv_ratio]
 
     data_sets = {}
 
