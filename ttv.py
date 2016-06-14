@@ -65,7 +65,7 @@ def make_ttv_yaml(corpora, path_to_ttv_file, ttv_ratio=DEFAULT_TTV_RATIO, determ
         yaml.dump(dict_for_yaml, f, default_flow_style=False)
 
 
-def make_ttv(dataset, ttv_ratio=DEFAULT_TTV_RATIO, deterministic=False):
+def make_ttv(dataset, ttv_ratio=DEFAULT_TTV_RATIO, deterministic=False, limit_per_set=None):
     """
     Return a dict of test,train,validation sets with information regarding the split (lists of paths to data).
 
@@ -78,7 +78,7 @@ def make_ttv(dataset, ttv_ratio=DEFAULT_TTV_RATIO, deterministic=False):
     returns {
         'subjects': list of subjectIDs in the set
         'number_of_files': number of files the set has
-        'expected_size' : (ttv_ratio[2] * number_of_resources)
+        'expected_size' : (ttv_ratio * number_of_resources) or the limit_per_set (if not None),
         'paths': list of paths to the files
     }
     """
@@ -97,17 +97,23 @@ def make_ttv(dataset, ttv_ratio=DEFAULT_TTV_RATIO, deterministic=False):
     data_sets = {}
 
     for key, ratio in zip(['test', 'train', 'validation'], ttv_ratio):
+        expected_size = min(limit_per_set, (ratio * number_of_resources)) \
+            if limit_per_set is not None else (ratio * number_of_resources)
 
         data_sets[key] = {
             'subjects': [],
             'number_of_files': 0,
-            'expected_size': (ratio * number_of_resources)
+            'expected_size': expected_size
         }
 
 
     set_names = list(data_sets.keys())
     i = 0
     while len(sizes_and_ids) > 0:
+        if limit_per_set is not None:
+            # if all the sets have more than the limit
+            if all(map(lambda x: x['number_of_files'] >= x['expected_size'], data_sets.values())):
+                break
         i += 1
         s = data_sets[set_names[i % len(set_names)]]
         if s['number_of_files'] < s['expected_size']:
@@ -141,7 +147,8 @@ def get_dataset(corpora):
         dirpath = posixpath.sep.join(dirpath.split(os.sep))
         return posixpath.join(dirpath, filename)
 
-    wav_files_in_corpora = filter(lambda x: x.endswith('.wav'),
+    wav_files_in_corpora = filter(
+        lambda x: x.endswith('.wav'),
         sum(
             [list(map(lambda x: make_posix_path(corpus, x), os.listdir(corpus))) for corpus in corpora],
             []
