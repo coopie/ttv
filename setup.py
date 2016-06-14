@@ -11,5 +11,5 @@ setup(name='ttv',
       license='MIT',
       install_requires=['docopt', 'pyyaml'],
       packages=['ttv'],
-      package_dir=({'ttc': 'ttv.py'})
+      package_dir=({'ttv': 'ttv.py'})
 )
