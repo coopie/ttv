@@ -10,6 +10,5 @@ setup(name='ttv',
       download_url='https://github.com/coopie/ttv/archive/master.zip',
       license='MIT',
       install_requires=['docopt', 'pyyaml'],
-      packages=['ttv'],
-      package_dir=({'ttv': 'ttv.py'})
+      py_modules=['ttv']
 )
