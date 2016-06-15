@@ -79,12 +79,12 @@ class TestTTVMethods(unittest.TestCase):
 
 
     def test_make_ttv_with_limit(self):
-        data_sets = ttv.make_ttv(DUMMY_DATASET, limit_per_set=1)
+        data_sets = ttv.make_ttv(DUMMY_DATASET, limit_per_set=3, ttv_ratio=(1, 1, 1))
         test, train, validation = get_for_ttv('paths', data_sets)
 
         for data_set in [test, train, validation]:
             self.assertTrue(
-            len(data_set) >= 1
+                len(data_set) >= 1
             )
 
         def get_id(path):

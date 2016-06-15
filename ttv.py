@@ -97,7 +97,7 @@ def make_ttv(dataset, ttv_ratio=DEFAULT_TTV_RATIO, deterministic=False, limit_pe
     data_sets = {}
 
     for key, ratio in zip(['test', 'train', 'validation'], ttv_ratio):
-        expected_size = min(limit_per_set, (ratio * number_of_resources)) \
+        expected_size = min(limit_per_set * ratio, (ratio * number_of_resources)) \
             if limit_per_set is not None else (ratio * number_of_resources)
 
         data_sets[key] = {
